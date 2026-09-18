@@ -43,13 +43,13 @@ export function validateBbox(bbox: string): [number, number, number, number] {
 function parseCsv(text: string): Record<string, string>[] {
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) return [];
-  const headers = lines[0].split(",").map((h) => h.trim());
+  const headers = lines[0]!.split(",").map((h) => h.trim());
   const rows: Record<string, string>[] = [];
   for (let i = 1; i < lines.length; i++) {
-    const cols = lines[i].split(",");
+    const cols = lines[i]!.split(",");
     if (cols.length !== headers.length) continue;
     const row: Record<string, string> = {};
-    headers.forEach((h, j) => (row[h] = cols[j].trim()));
+    headers.forEach((h, j) => (row[h] = cols[j]!.trim()));
     rows.push(row);
   }
   return rows;

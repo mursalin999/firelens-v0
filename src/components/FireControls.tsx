@@ -12,7 +12,7 @@ export function defaultFilters(): FireFilters {
   const start = new Date();
   start.setUTCFullYear(start.getUTCFullYear() - 1);
   return {
-    regionId: REGIONS[0].id,
+    regionId: REGIONS[0]!.id,
     startDate: start.toISOString().slice(0, 10),
     endDate: end.toISOString().slice(0, 10),
     confidence: [...CONFIDENCE_TIERS],
