@@ -75,24 +75,24 @@ function modisConfidenceTier(score: number | null): "low" | "nominal" | "high" {
 export function harmonizeModis(rows: Record<string, string>[]): HarmonizedRow[] {
   const out: HarmonizedRow[] = [];
   for (const r of rows) {
-    const lat = num(r.latitude);
-    const lon = num(r.longitude);
-    if (lat === null || lon === null || !r.acq_date || !r.acq_time) continue;
-    const conf = num(r.confidence);
+    const lat = num(r["latitude"]);
+    const lon = num(r["longitude"]);
+    if (lat === null || lon === null || !r["acq_date"] || !r["acq_time"]) continue;
+    const conf = num(r["confidence"]);
     out.push({
       lat,
       lon,
-      acq_date: r.acq_date,
-      acq_time: r.acq_time,
+      acq_date: r["acq_date"],
+      acq_time: r["acq_time"],
       sensor: "MODIS",
-      satellite: r.satellite === "T" ? "T" : "A",
+      satellite: r["satellite"] === "T" ? "T" : "A",
       resolution_m: 1000,
-      brightness_k: num(r.brightness),
-      brightness2_k: num(r.bright_t31),
-      frp_mw: num(r.frp),
+      brightness_k: num(r["brightness"]),
+      brightness2_k: num(r["bright_t31"]),
+      frp_mw: num(r["frp"]),
       confidence_tier: modisConfidenceTier(conf),
-      confidence_raw: r.confidence ?? null,
-      day_night: r.daynight === "N" ? "N" : r.daynight === "D" ? "D" : null,
+      confidence_raw: r["confidence"] ?? null,
+      day_night: r["daynight"] === "N" ? "N" : r["daynight"] === "D" ? "D" : null,
     });
   }
   return out;
@@ -101,24 +101,24 @@ export function harmonizeModis(rows: Record<string, string>[]): HarmonizedRow[] 
 export function harmonizeViirs(rows: Record<string, string>[]): HarmonizedRow[] {
   const out: HarmonizedRow[] = [];
   for (const r of rows) {
-    const lat = num(r.latitude);
-    const lon = num(r.longitude);
-    if (lat === null || lon === null || !r.acq_date || !r.acq_time) continue;
-    const c = (r.confidence ?? "").toLowerCase();
+    const lat = num(r["latitude"]);
+    const lon = num(r["longitude"]);
+    if (lat === null || lon === null || !r["acq_date"] || !r["acq_time"]) continue;
+    const c = (r["confidence"] ?? "").toLowerCase();
     out.push({
       lat,
       lon,
-      acq_date: r.acq_date,
-      acq_time: r.acq_time,
+      acq_date: r["acq_date"],
+      acq_time: r["acq_time"],
       sensor: "VIIRS",
-      satellite: r.satellite ?? "N20",
+      satellite: r["satellite"] ?? "N20",
       resolution_m: 375,
-      brightness_k: num(r.bright_ti4),
-      brightness2_k: num(r.bright_ti5),
-      frp_mw: num(r.frp),
+      brightness_k: num(r["bright_ti4"]),
+      brightness2_k: num(r["bright_ti5"]),
+      frp_mw: num(r["frp"]),
       confidence_tier: c.startsWith("h") ? "high" : c.startsWith("n") ? "nominal" : "low",
-      confidence_raw: r.confidence ?? null,
-      day_night: r.daynight === "N" ? "N" : r.daynight === "D" ? "D" : null,
+      confidence_raw: r["confidence"] ?? null,
+      day_night: r["daynight"] === "N" ? "N" : r["daynight"] === "D" ? "D" : null,
     });
   }
   return out;
