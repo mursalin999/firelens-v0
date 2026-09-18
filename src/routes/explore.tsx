@@ -105,11 +105,12 @@ function Explore() {
     let stored = 0;
     try {
       for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i]!;
         const res = await runBackfill({
           data: {
             bbox: region.bbox,
-            start_date: chunks[i].start,
-            end_date: chunks[i].end,
+            start_date: chunk.start,
+            end_date: chunk.end,
           },
         });
         stored += res.stored;
