@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      fire_detections: {
+        Row: {
+          acq_date: string
+          acq_time: string
+          brightness_k: number | null
+          brightness2_k: number | null
+          confidence_raw: string | null
+          confidence_tier: string
+          created_at: string
+          day_night: string | null
+          frp_mw: number | null
+          id: number
+          lat: number
+          lon: number
+          resolution_m: number
+          satellite: string
+          sensor: string
+        }
+        Insert: {
+          acq_date: string
+          acq_time: string
+          brightness_k?: number | null
+          brightness2_k?: number | null
+          confidence_raw?: string | null
+          confidence_tier: string
+          created_at?: string
+          day_night?: string | null
+          frp_mw?: number | null
+          id?: never
+          lat: number
+          lon: number
+          resolution_m: number
+          satellite: string
+          sensor: string
+        }
+        Update: {
+          acq_date?: string
+          acq_time?: string
+          brightness_k?: number | null
+          brightness2_k?: number | null
+          confidence_raw?: string | null
+          confidence_tier?: string
+          created_at?: string
+          day_night?: string | null
+          frp_mw?: number | null
+          id?: never
+          lat?: number
+          lon?: number
+          resolution_m?: number
+          satellite?: string
+          sensor?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
