@@ -151,7 +151,7 @@ export async function fetchFirmsCsv(opts: {
 export async function fetchAndHarmonize(opts: {
   bbox: string;
   days: number;
-  date?: string;
+  date?: string | undefined;
 }): Promise<HarmonizedRow[]> {
   const mapKey = process.env["FIRMS_MAP_KEY"];
   if (!mapKey) throw new Error("FIRMS_MAP_KEY is not configured");
