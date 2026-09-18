@@ -129,7 +129,7 @@ export async function fetchFirmsCsv(opts: {
   source: FirmsSource;
   bbox: string; // "west,south,east,north"
   days: number; // 1..5
-  date?: string; // YYYY-MM-DD
+  date?: string | undefined; // YYYY-MM-DD
 }): Promise<Record<string, string>[]> {
   const { mapKey, source, bbox, days, date } = opts;
   const url =

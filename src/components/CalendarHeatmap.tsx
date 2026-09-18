@@ -60,10 +60,10 @@ export function CalendarHeatmap({ days, startDate, endDate, mode }: Props) {
   const monthLabels: { label: string; index: number }[] = [];
   let lastMonth = -1;
   weeks.forEach((week, i) => {
-    const m = week[0].date.getUTCMonth();
-    if (m !== lastMonth && week[0].date <= end) {
+    const m = week[0]!.date.getUTCMonth();
+    if (m !== lastMonth && week[0]!.date <= end) {
       monthLabels.push({
-        label: week[0].date.toLocaleString("en", { month: "short", timeZone: "UTC" }),
+        label: week[0]!.date.toLocaleString("en", { month: "short", timeZone: "UTC" }),
         index: i,
       });
       lastMonth = m;
