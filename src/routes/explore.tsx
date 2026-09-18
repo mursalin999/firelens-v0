@@ -2,7 +2,7 @@ import { createFileRoute, ClientOnly } from "@tanstack/react-router";
 import { Suspense, lazy, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { REGIONS, parseBbox, SENSOR_META } from "@/lib/regions";
+import { REGIONS, getRegion, parseBbox, SENSOR_META } from "@/lib/regions";
 import {
   RegionSelect,
   DateRangeInputs,
@@ -74,7 +74,7 @@ function Explore() {
   const runBackfill = useServerFn(backfillFireData);
   const runFetch = useServerFn(fetchFireData);
 
-  const region = REGIONS.find((r) => r.id === filters.regionId) ?? REGIONS[0];
+  const region = getRegion(filters.regionId);
   const bboxParts = parseBbox(region.bbox);
 
   const query = useQuery({

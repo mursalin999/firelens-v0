@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { REGIONS, parseBbox } from "@/lib/regions";
+import { REGIONS, getRegion, parseBbox } from "@/lib/regions";
 import { RegionSelect, DateRangeInputs, defaultFilters } from "@/components/FireControls";
 import { CalendarHeatmap } from "@/components/CalendarHeatmap";
 import { getDailyCounts } from "@/lib/firelens.functions";
@@ -36,7 +36,7 @@ function CalendarPage() {
   const [endDate, setEndDate] = useState(defaults.endDate);
   const [mode, setMode] = useState<Mode>("combined");
 
-  const region = REGIONS.find((r) => r.id === regionId) ?? REGIONS[0];
+  const region = getRegion(regionId);
   const bboxParts = parseBbox(region.bbox);
 
   const query = useQuery({

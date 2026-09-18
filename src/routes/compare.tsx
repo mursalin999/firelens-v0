@@ -1,7 +1,7 @@
 import { createFileRoute, ClientOnly } from "@tanstack/react-router";
 import { Suspense, lazy, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { REGIONS, parseBbox, SENSOR_META, type SensorId } from "@/lib/regions";
+import { REGIONS, getRegion, parseBbox, SENSOR_META, type SensorId } from "@/lib/regions";
 import { RegionSelect, DateRangeInputs, defaultFilters } from "@/components/FireControls";
 import { getDetections, getDailyCounts } from "@/lib/firelens.functions";
 
@@ -37,7 +37,7 @@ function Compare() {
   const [endDate, setEndDate] = useState(defaults.endDate);
   const [mode, setMode] = useState<Mode>("combined");
 
-  const region = REGIONS.find((r) => r.id === regionId) ?? REGIONS[0];
+  const region = getRegion(regionId);
   const bboxParts = parseBbox(region.bbox);
   const sensors = mode === "combined" ? undefined : [mode];
 

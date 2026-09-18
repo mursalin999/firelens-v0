@@ -15,11 +15,15 @@ export const REGIONS: Region[] = [
   { id: "california", name: "California", bbox: "-124.5,32.5,-114.1,42.0", center: [37.5, -119.5], zoom: 6 },
 ];
 
-export const DEFAULT_REGION = REGIONS[0];
+export const DEFAULT_REGION: Region = REGIONS[0]!;
+
+export function getRegion(id: string): Region {
+  return REGIONS.find((r) => r.id === id) ?? DEFAULT_REGION;
+}
 
 export function parseBbox(bbox: string): { west: number; south: number; east: number; north: number } {
   const [west, south, east, north] = bbox.split(",").map(Number);
-  return { west, south, east, north };
+  return { west: west!, south: south!, east: east!, north: north! };
 }
 
 export const SENSOR_META = {
