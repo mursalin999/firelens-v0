@@ -62,15 +62,19 @@ function Compare() {
   const chartMax = Math.max(1, ...days.map((d) => d.modis + d.viirs));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+      <div>
         <div>
           <h1 className="font-sans text-2xl font-semibold tracking-tight">Sensor Comparison</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Same Earth, two instruments — see where MODIS and VIIRS agree and where they don't.
           </p>
         </div>
-        <div className="flex flex-wrap items-end gap-4">
+      </div>
+
+      <div className="mt-6 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-6">
+      <aside className="space-y-5 lg:sticky lg:top-20 lg:rounded-lg lg:border lg:border-border lg:bg-card lg:p-5">
+        <div className="flex flex-wrap items-end gap-4 lg:flex-col lg:items-stretch">
           <RegionSelect value={regionId} onChange={setRegionId} />
           <DateRangeInputs
             startDate={startDate}
@@ -79,9 +83,7 @@ function Compare() {
             onEnd={setEndDate}
           />
         </div>
-      </div>
-
-      <div className="mt-6 flex gap-1.5" role="tablist" aria-label="Sensor selection">
+      <div className="flex gap-1.5 lg:flex-col" role="tablist" aria-label="Sensor selection">
         {(["MODIS", "VIIRS", "combined"] as Mode[]).map((m) => (
           <button
             key={m}
@@ -98,9 +100,10 @@ function Compare() {
           </button>
         ))}
       </div>
+      </aside>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <div className="h-[420px] overflow-hidden rounded-lg border border-border">
+      <div className="mt-6 grid gap-6 lg:mt-0 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
+        <div className="h-[420px] overflow-hidden rounded-lg border border-border lg:h-[max(620px,calc(100vh-11rem))]">
           <ClientOnly
             fallback={<div className="h-full w-full bg-muted" />}
           >
@@ -134,7 +137,7 @@ function Compare() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-border bg-card p-4">
+          <div className="rounded-lg border border-border bg-card p-4 lg:min-h-[260px]">
             <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
               Daily detections
             </div>
@@ -185,6 +188,7 @@ function Compare() {
             </p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
