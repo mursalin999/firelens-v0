@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { LogoMark } from "@/components/LogoMark";
 
 const NAV_ITEMS = [
   { to: "/", label: "FireLens" },
@@ -13,9 +14,9 @@ export function SiteNav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-14 max-w-screen-2xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-ember" aria-hidden />
+          <LogoMark className="h-7 w-7 text-ember" />
           <span className="font-sans text-base font-semibold tracking-tight">FireLens</span>
           <span className="hidden font-mono text-[11px] text-muted-foreground sm:inline">
             MODIS × VIIRS

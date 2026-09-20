@@ -135,65 +135,65 @@ function Explore() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
+      <div>
         <div>
           <h1 className="font-sans text-2xl font-semibold tracking-tight">Explore</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Harmonized fire detections for {region.name}, {filters.startDate} → {filters.endDate}
           </p>
         </div>
-        <div className="flex flex-wrap items-end gap-4">
-          <RegionSelect
-            value={filters.regionId}
-            onChange={(regionId) => setFilters((f) => ({ ...f, regionId }))}
-          />
-          <DateRangeInputs
-            startDate={filters.startDate}
-            endDate={filters.endDate}
-            onStart={(startDate) => setFilters((f) => ({ ...f, startDate }))}
-            onEnd={(endDate) => setFilters((f) => ({ ...f, endDate }))}
-          />
-          <ConfidenceFilter
-            value={filters.confidence}
-            onChange={(confidence) => setFilters((f) => ({ ...f, confidence }))}
-          />
-        </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3">
-        <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-          Data pull
-        </span>
-        <button
-          type="button"
-          onClick={pullRecent}
-          disabled={pull.status === "running"}
-          className="rounded-md bg-primary px-3 py-1.5 font-sans text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
-        >
-          Fetch last 3 days
-        </button>
-        <button
-          type="button"
-          onClick={pullHistory}
-          disabled={pull.status === "running"}
-          className="rounded-md border border-ember bg-ember/10 px-3 py-1.5 font-sans text-xs font-medium text-ember transition-colors hover:bg-ember/20 disabled:opacity-50"
-        >
-          Load full range from NASA FIRMS
-        </button>
-        <span className="font-mono text-xs text-muted-foreground" role="status">
-          {pull.status === "running" &&
-            `Pulling… window ${pull.done}/${pull.total} (this can take a few minutes for long ranges)`}
-          {pull.status === "done" && `Stored ${pull.stored.toLocaleString()} detections`}
-          {pull.status === "error" && (
-            <span className="text-destructive">{pull.message}</span>
-          )}
-          {pull.status === "idle" && "Live data comes from NASA FIRMS — pulls are safe to re-run."}
-        </span>
-      </div>
+      <div className="mt-6 lg:grid lg:grid-cols-[280px_minmax(0,1fr)] lg:items-start lg:gap-6">
+        <aside className="space-y-5 lg:sticky lg:top-20 lg:rounded-lg lg:border lg:border-border lg:bg-card lg:p-5">
+          <div className="flex flex-wrap items-end gap-4 lg:flex-col lg:items-stretch">
+            <RegionSelect
+              value={filters.regionId}
+              onChange={(regionId) => setFilters((f) => ({ ...f, regionId }))}
+            />
+            <DateRangeInputs
+              startDate={filters.startDate}
+              endDate={filters.endDate}
+              onStart={(startDate) => setFilters((f) => ({ ...f, startDate }))}
+              onEnd={(endDate) => setFilters((f) => ({ ...f, endDate }))}
+            />
+            <ConfidenceFilter
+              value={filters.confidence}
+              onChange={(confidence) => setFilters((f) => ({ ...f, confidence }))}
+            />
+          </div>
+          <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3 lg:flex-col lg:items-stretch lg:border-x-0 lg:border-b-0 lg:bg-transparent lg:px-0 lg:pb-0 lg:pt-5">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+              Data pull
+            </span>
+            <button
+              type="button"
+              onClick={pullRecent}
+              disabled={pull.status === "running"}
+              className="rounded-md bg-primary px-3 py-1.5 font-sans text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              Fetch last 3 days
+            </button>
+            <button
+              type="button"
+              onClick={pullHistory}
+              disabled={pull.status === "running"}
+              className="rounded-md border border-ember bg-ember/10 px-3 py-1.5 font-sans text-xs font-medium text-ember transition-colors hover:bg-ember/20 disabled:opacity-50"
+            >
+              Load full range from NASA FIRMS
+            </button>
+            <span className="font-mono text-xs text-muted-foreground" role="status">
+              {pull.status === "running" && `Pulling… window ${pull.done}/${pull.total} (this can take a few minutes for long ranges)`}
+              {pull.status === "done" && `Stored ${pull.stored.toLocaleString()} detections`}
+              {pull.status === "error" && <span className="text-destructive">{pull.message}</span>}
+              {pull.status === "idle" && "Live data comes from NASA FIRMS — pulls are safe to re-run."}
+            </span>
+          </div>
+        </aside>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_280px]">
-        <div className="h-[520px] overflow-hidden rounded-lg border border-border">
+        <div className="mt-6 grid gap-6 lg:mt-0 xl:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="h-[520px] overflow-hidden rounded-lg border border-border lg:h-[max(620px,calc(100vh-11rem))]">
           <ClientOnly fallback={<MapFallback />}>
             <Suspense fallback={<MapFallback />}>
               <FireMap
@@ -258,6 +258,7 @@ function Explore() {
             </p>
           )}
         </aside>
+        </div>
       </div>
     </div>
   );
