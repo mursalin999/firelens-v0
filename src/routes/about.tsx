@@ -95,10 +95,10 @@ function About() {
         </ul>
       </section>
 
-      <footer className="mt-12 border-t border-border pt-6 font-mono text-xs text-muted-foreground">
+      <div className="mt-12 border-t border-border pt-6 font-mono text-xs text-muted-foreground">
         Source: NASA FIRMS · firms.modaps.eosdis.nasa.gov — FireLens never fabricates data; empty
         views mean no pull has run or nothing was detected.
-      </footer>
+      </div>
     </div>
   );
 }
