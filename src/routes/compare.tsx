@@ -146,7 +146,7 @@ function Compare() {
                 No data yet — pull data on the Explore page.
               </p>
             ) : (
-              <div className="mt-3 flex h-40 items-end gap-px">
+              <div className="mt-3 flex h-40 items-end gap-px lg:h-[clamp(200px,28vh,360px)]">
                 {days.map((d) => {
                   const mH = (d.modis / chartMax) * 100;
                   const vH = (d.viirs / chartMax) * 100;
