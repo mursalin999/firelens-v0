@@ -27,14 +27,14 @@ export function RegionSelect({
   onChange: (id: string) => void;
 }) {
   return (
-    <label className="flex flex-col gap-1">
+    <label className="flex flex-col gap-1 lg:w-full">
       <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
         Region
       </span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="rounded-md border border-input bg-card px-3 py-2 font-sans text-sm"
+        className="rounded-md border border-input bg-card px-3 py-2 font-sans text-sm lg:w-full"
       >
         {REGIONS.map((r) => (
           <option key={r.id} value={r.id}>
@@ -58,8 +58,8 @@ export function DateRangeInputs({
   onEnd: (d: string) => void;
 }) {
   return (
-    <div className="flex gap-3">
-      <label className="flex flex-col gap-1">
+    <div className="flex gap-3 lg:grid lg:w-full lg:grid-cols-1">
+      <label className="flex flex-col gap-1 lg:w-full">
         <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
           From
         </span>
@@ -67,10 +67,10 @@ export function DateRangeInputs({
           type="date"
           value={startDate}
           onChange={(e) => onStart(e.target.value)}
-          className="rounded-md border border-input bg-card px-3 py-2 font-mono text-sm"
+          className="rounded-md border border-input bg-card px-3 py-2 font-mono text-sm lg:w-full"
         />
       </label>
-      <label className="flex flex-col gap-1">
+      <label className="flex flex-col gap-1 lg:w-full">
         <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
           To
         </span>
@@ -78,7 +78,7 @@ export function DateRangeInputs({
           type="date"
           value={endDate}
           onChange={(e) => onEnd(e.target.value)}
-          className="rounded-md border border-input bg-card px-3 py-2 font-mono text-sm"
+          className="rounded-md border border-input bg-card px-3 py-2 font-mono text-sm lg:w-full"
         />
       </label>
     </div>
