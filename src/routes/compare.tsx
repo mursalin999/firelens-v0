@@ -103,7 +103,7 @@ function Compare() {
       </aside>
 
       <div className="mt-6 grid gap-6 lg:mt-0 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
-        <div className="h-[420px] overflow-hidden rounded-lg border border-border lg:h-[max(620px,calc(100vh-11rem))]">
+        <div className="h-[420px] overflow-hidden rounded-lg border border-border lg:h-[620px]">
           <ClientOnly
             fallback={<div className="h-full w-full bg-muted" />}
           >
