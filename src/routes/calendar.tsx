@@ -48,11 +48,41 @@ function CalendarPage() {
   });
 
   const days = query.data ?? [];
-  const total = days.reduce((s, d) => s + d.modis + d.viirs, 0);
+  const countForMode = (day: (typeof days)[number]) =>
+    mode === "MODIS" ? day.modis : mode === "VIIRS" ? day.viirs : day.modis + day.viirs;
+  const total = days.reduce((sum, day) => sum + countForMode(day), 0);
   const busiest = days.reduce<(typeof days)[number] | null>(
-    (best, d) => (d.modis + d.viirs > (best ? best.modis + best.viirs : -1) ? d : best),
+    (best, day) => (countForMode(day) > (best ? countForMode(best) : -1) ? day : best),
     null,
   );
+  const monthlyTotals = new Map<string, number>();
+  const weekdayTotals = Array.from({ length: 7 }, () => 0);
+  for (const day of days) {
+    const count = countForMode(day);
+    const month = day.date.slice(0, 7);
+    monthlyTotals.set(month, (monthlyTotals.get(month) ?? 0) + count);
+    weekdayTotals[new Date(`${day.date}T00:00:00Z`).getUTCDay()] += count;
+  }
+  const activeMonths = [...monthlyTotals.entries()].filter(([, count]) => count > 0);
+  const busiestMonth = activeMonths.reduce<(typeof activeMonths)[number] | null>(
+    (best, item) => (!best || item[1] > best[1] ? item : best),
+    null,
+  );
+  const quietestMonth = activeMonths.reduce<(typeof activeMonths)[number] | null>(
+    (best, item) => (!best || item[1] < best[1] ? item : best),
+    null,
+  );
+  const strongestWeekdayIndex = weekdayTotals.reduce(
+    (best, count, index) => (count > weekdayTotals[best]! ? index : best),
+    0,
+  );
+  const monthLabel = (value: string) =>
+    new Date(`${value}-01T00:00:00Z`).toLocaleString("en", {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    });
+  const weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   return (
     <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
@@ -142,11 +172,55 @@ function CalendarPage() {
             </div>
             {busiest && (
               <div className="font-mono text-xs text-muted-foreground">
-                {(busiest.modis + busiest.viirs).toLocaleString()} detections
+                {countForMode(busiest).toLocaleString()} detections
               </div>
             )}
           </div>
         </div>
+      )}
+
+      {activeMonths.length > 0 && (
+        <section className="mt-8 border-t border-border py-8" aria-labelledby="calendar-insights">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-start">
+            <div>
+              <p className="font-mono text-xs uppercase tracking-wider text-ember">Computed insights</p>
+              <h2 id="calendar-insights" className="mt-2 font-sans text-xl font-semibold">
+                Patterns in this selection
+              </h2>
+              <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
+                Derived only from the visible {mode === "combined" ? "harmonized" : mode} daily counts.
+                Months without stored detections are excluded from the quietest-month comparison.
+              </p>
+            </div>
+            <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
+              {[
+                {
+                  label: "Busiest month",
+                  value: busiestMonth ? monthLabel(busiestMonth[0]) : "—",
+                  detail: busiestMonth ? `${busiestMonth[1].toLocaleString()} detections` : "No activity",
+                },
+                {
+                  label: "Quietest active month",
+                  value: quietestMonth ? monthLabel(quietestMonth[0]) : "—",
+                  detail: quietestMonth ? `${quietestMonth[1].toLocaleString()} detections` : "No activity",
+                },
+                {
+                  label: "Strongest weekday",
+                  value: weekdayNames[strongestWeekdayIndex],
+                  detail: `${weekdayTotals[strongestWeekdayIndex]!.toLocaleString()} detections`,
+                },
+              ].map((insight) => (
+                <div key={insight.label} className="bg-card p-5">
+                  <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    {insight.label}
+                  </div>
+                  <div className="mt-3 font-sans text-lg font-semibold">{insight.value}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">{insight.detail}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
       )}
     </div>
   );

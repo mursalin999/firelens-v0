@@ -1,4 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, Database, Layers3, CalendarDays } from "lucide-react";
+import { getLiveSnapshot } from "@/lib/firelens.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,6 +26,11 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const snapshot = useQuery({
+    queryKey: ["live-snapshot"],
+    queryFn: () => getLiveSnapshot(),
+  });
+
   return (
     <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
       <section className="border-b border-border py-20 sm:py-28 lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] lg:items-center lg:gap-16 lg:py-20">
@@ -72,6 +80,96 @@ function Home() {
             <div className="flex items-center gap-2 font-sans text-sm"><span className="h-2.5 w-2.5 rounded-full bg-ember" />MODIS · 1 km</div>
             <div className="flex items-center gap-2 font-sans text-sm"><span className="h-2.5 w-2.5 rounded-full bg-steel" />VIIRS · 375 m</div>
           </div>
+        </div>
+      </section>
+
+      <section className="border-b border-border py-10" aria-labelledby="snapshot-heading">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-wider text-ember">Live Snapshot</p>
+            <h2 id="snapshot-heading" className="mt-2 font-sans text-2xl font-semibold">
+              What FireLens currently holds
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              These totals come directly from stored NASA FIRMS records and update after each data pull.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 border-y border-border lg:min-w-[620px] lg:border-x">
+            {[
+              {
+                label: "Detections tracked",
+                value: snapshot.isLoading ? "…" : snapshot.data?.totalDetections.toLocaleString() ?? "—",
+              },
+              {
+                label: "Active sensors",
+                value: snapshot.isLoading ? "…" : `${snapshot.data?.activeSensors ?? 0} / 2`,
+              },
+              {
+                label: "Presets with records",
+                value: snapshot.isLoading
+                  ? "…"
+                  : `${snapshot.data?.regionsCovered ?? 0} / ${snapshot.data?.totalRegions ?? 0}`,
+              },
+            ].map((item, index) => (
+              <div key={item.label} className={`px-3 py-5 sm:px-6 ${index > 0 ? "border-l border-border" : ""}`}>
+                <div className="font-sans text-2xl font-semibold sm:text-3xl">{item.value}</div>
+                <div className="mt-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {item.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {snapshot.isError && (
+          <p className="mt-4 text-xs text-destructive">The live snapshot is temporarily unavailable.</p>
+        )}
+      </section>
+
+      <section className="border-b border-border py-16" aria-labelledby="workflow-heading">
+        <div className="flex items-end justify-between gap-6">
+          <div>
+            <p className="font-mono text-xs uppercase tracking-wider text-ember">How it works</p>
+            <h2 id="workflow-heading" className="mt-2 font-sans text-2xl font-semibold">
+              From orbital signal to readable pattern
+            </h2>
+          </div>
+          <Link to="/about" search={{}} className="hidden items-center gap-2 font-sans text-sm text-muted-foreground hover:text-foreground sm:flex">
+            Read the method <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="mt-8 grid gap-px overflow-hidden rounded-lg border border-border bg-border lg:grid-cols-3">
+          {[
+            {
+              n: "01",
+              title: "NASA FIRMS data",
+              body: "MODIS and VIIRS report thermal anomalies with different resolutions and confidence systems.",
+              icon: Database,
+            },
+            {
+              n: "02",
+              title: "Harmonization",
+              body: "FireLens aligns both feeds to one structure while preserving the original sensor details.",
+              icon: Layers3,
+            },
+            {
+              n: "03",
+              title: "Calendar & insights",
+              body: "Daily counts become maps, calendar patterns, and transparent sensor comparisons.",
+              icon: CalendarDays,
+            },
+          ].map((step) => {
+            const Icon = step.icon;
+            return (
+              <div key={step.n} className="bg-card p-6">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-ember">{step.n}</span>
+                  <Icon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
+                </div>
+                <h3 className="mt-8 font-sans text-lg font-semibold">{step.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.body}</p>
+              </div>
+            );
+          })}
         </div>
       </section>
 

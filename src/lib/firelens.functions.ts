@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
+import { REGIONS, parseBbox } from "./regions";
 
 const bboxSchema = z
   .string()
@@ -138,3 +139,43 @@ export const getDailyCounts = createServerFn({ method: "GET" })
     }
     return [...counts.values()].sort((a, b) => a.date.localeCompare(b.date));
   });
+
+// Database-wide totals for the public Home snapshot. Region coverage means a
+// preset bounding box currently contains at least one stored FIRMS detection.
+export const getLiveSnapshot = createServerFn({ method: "GET" }).handler(async () => {
+  const sb = publicClient();
+  const countQuery = (sensor?: "MODIS" | "VIIRS") => {
+    let query = sb.from("fire_detections").select("id", { count: "exact", head: true });
+    if (sensor) query = query.eq("sensor", sensor);
+    return query;
+  };
+
+  const [totalResult, modisResult, viirsResult, ...regionResults] = await Promise.all([
+    countQuery(),
+    countQuery("MODIS"),
+    countQuery("VIIRS"),
+    ...REGIONS.map((region) => {
+      const bounds = parseBbox(region.bbox);
+      return sb
+        .from("fire_detections")
+        .select("id", { count: "exact", head: true })
+        .gte("lon", bounds.west)
+        .lte("lon", bounds.east)
+        .gte("lat", bounds.south)
+        .lte("lat", bounds.north);
+    }),
+  ]);
+
+  const firstError = [totalResult, modisResult, viirsResult, ...regionResults].find(
+    (result) => result.error,
+  )?.error;
+  if (firstError) throw new Error(firstError.message);
+
+  return {
+    totalDetections: totalResult.count ?? 0,
+    activeSensors: [modisResult.count ?? 0, viirsResult.count ?? 0].filter((count) => count > 0)
+      .length,
+    regionsCovered: regionResults.filter((result) => (result.count ?? 0) > 0).length,
+    totalRegions: REGIONS.length,
+  };
+});
