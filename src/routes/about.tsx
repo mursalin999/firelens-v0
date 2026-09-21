@@ -95,6 +95,18 @@ function About() {
         </ul>
       </section>
 
+      <section className="mt-10 space-y-4 border-t border-border pt-8">
+        <h2 className="font-sans text-xl font-semibold">How This Was Built</h2>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          FireLens was created with AI-assisted development. AI supported planning and code, while
+          Team Emberline directed the product, chose the methodology, and reviewed the result.
+        </p>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          That assistance does not generate the fire records shown here. Detection data comes from
+          NASA FIRMS, and every summary in FireLens is calculated from the stored source records.
+        </p>
+      </section>
+
       <div className="mt-12 border-t border-border pt-6 font-mono text-xs text-muted-foreground">
         Source: NASA FIRMS · firms.modaps.eosdis.nasa.gov — FireLens never fabricates data; empty
         views mean no pull has run or nothing was detected.

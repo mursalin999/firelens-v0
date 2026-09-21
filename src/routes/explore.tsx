@@ -98,6 +98,13 @@ function Explore() {
 
   const detections = useMemo(() => query.data ?? [], [query.data]);
   const modisCount = detections.filter((d) => d.sensor === "MODIS").length;
+  const percentage = (count: number) =>
+    detections.length === 0 ? 0 : Math.round((count / detections.length) * 100);
+  const confidenceCounts = {
+    low: detections.filter((d) => d.confidence_tier === "low").length,
+    nominal: detections.filter((d) => d.confidence_tier === "nominal").length,
+    high: detections.filter((d) => d.confidence_tier === "high").length,
+  };
 
   const pullHistory = async () => {
     const chunks = monthChunks(filters.startDate, filters.endDate);
@@ -244,6 +251,45 @@ function Explore() {
               Dot brightness reflects confidence tier; MODIS dots are larger to hint at
               its coarser 1 km pixel.
             </p>
+          </div>
+
+          <div className="space-y-3 border-t border-border pt-4">
+            <div className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+              Share of current view
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <div>
+                <div className="font-sans text-xl font-semibold">{percentage(modisCount)}%</div>
+                <div className="text-xs text-muted-foreground">MODIS</div>
+              </div>
+              <div>
+                <div className="font-sans text-xl font-semibold">
+                  {percentage(detections.length - modisCount)}%
+                </div>
+                <div className="text-xs text-muted-foreground">VIIRS</div>
+              </div>
+            </div>
+            <div className="space-y-2 pt-1">
+              {(["low", "nominal", "high"] as const).map((tier) => (
+                <div key={tier} className="grid grid-cols-[4.5rem_1fr_auto] items-center gap-2">
+                  <span className="text-xs capitalize text-muted-foreground">{tier}</span>
+                  <span className="h-1.5 overflow-hidden rounded-full bg-muted">
+                    <span
+                      className="block h-full rounded-full bg-ember"
+                      style={{ width: `${percentage(confidenceCounts[tier])}%` }}
+                    />
+                  </span>
+                  <span className="w-9 text-right font-mono text-[10px] text-muted-foreground">
+                    {percentage(confidenceCounts[tier])}%
+                  </span>
+                </div>
+              ))}
+            </div>
+            {detections.length === 0 && (
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Percentages appear when this selection contains stored detections.
+              </p>
+            )}
           </div>
 
           {query.isError && (

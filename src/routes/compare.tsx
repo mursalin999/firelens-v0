@@ -60,6 +60,13 @@ function Compare() {
   const modisTotal = days.reduce((s, d) => s + d.modis, 0);
   const viirsTotal = days.reduce((s, d) => s + d.viirs, 0);
   const chartMax = Math.max(1, ...days.map((d) => d.modis + d.viirs));
+  const strongestDisagreement = days.reduce<(typeof days)[number] | null>(
+    (best, day) =>
+      !best || Math.abs(day.modis - day.viirs) > Math.abs(best.modis - best.viirs)
+        ? day
+        : best,
+    null,
+  );
 
   return (
     <div className="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
@@ -186,6 +193,22 @@ function Compare() {
               miss the other. Different confidence systems mean the same pixel can be "high" in one
               record and "nominal" in the other.
             </p>
+            <p className="mt-3">
+              These are detection counts, not a score of which instrument is correct. Resolution,
+              orbit timing, cloud cover, and viewing conditions all affect what each sensor records.
+            </p>
+            {strongestDisagreement && (
+              <div className="mt-4 border-l-2 border-ember pl-3">
+                <div className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Largest gap in this range
+                </div>
+                <p className="mt-1 text-foreground">
+                  On <strong>{strongestDisagreement.date}</strong>, the stored record contains{" "}
+                  <strong>{strongestDisagreement.modis} MODIS</strong> and{" "}
+                  <strong>{strongestDisagreement.viirs} VIIRS</strong> detections.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
