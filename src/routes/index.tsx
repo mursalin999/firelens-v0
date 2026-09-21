@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   return (
     <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
-      <section className="border-b border-border py-20 sm:py-28 lg:grid lg:min-h-[calc(100vh-12rem)] lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] lg:items-center lg:gap-16 lg:py-20">
+      <section className="border-b border-border py-20 sm:py-28 lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(420px,0.95fr)] lg:items-center lg:gap-16 lg:py-20">
         <div>
           <p className="font-mono text-xs uppercase tracking-[0.25em] text-ember">
             Team Emberline · NASA Space Apps Challenge 2026

@@ -193,7 +193,7 @@ function Explore() {
         </aside>
 
         <div className="mt-6 grid gap-6 lg:mt-0 xl:grid-cols-[minmax(0,1fr)_280px]">
-        <div className="h-[520px] overflow-hidden rounded-lg border border-border lg:h-[max(620px,calc(100vh-11rem))]">
+        <div className="h-[520px] overflow-hidden rounded-lg border border-border lg:h-[620px]">
           <ClientOnly fallback={<MapFallback />}>
             <Suspense fallback={<MapFallback />}>
               <FireMap
