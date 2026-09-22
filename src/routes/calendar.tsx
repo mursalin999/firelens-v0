@@ -61,7 +61,8 @@ function CalendarPage() {
     const count = countForMode(day);
     const month = day.date.slice(0, 7);
     monthlyTotals.set(month, (monthlyTotals.get(month) ?? 0) + count);
-    weekdayTotals[new Date(`${day.date}T00:00:00Z`).getUTCDay()] += count;
+    const weekday = new Date(`${day.date}T00:00:00Z`).getUTCDay();
+    weekdayTotals[weekday] = (weekdayTotals[weekday] ?? 0) + count;
   }
   const activeMonths = [...monthlyTotals.entries()].filter(([, count]) => count > 0);
   const busiestMonth = activeMonths.reduce<(typeof activeMonths)[number] | null>(
