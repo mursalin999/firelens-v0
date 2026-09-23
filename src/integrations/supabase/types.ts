@@ -73,7 +73,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      ingest_fire_detections: {
+        Args: { _rows: Json; _token: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never
