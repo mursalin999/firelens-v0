@@ -168,21 +168,47 @@ export async function fetchAndHarmonize(opts: {
 
 export async function upsertDetections(rows: HarmonizedRow[]): Promise<number> {
   if (rows.length === 0) return 0;
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  let upserted = 0;
   const CHUNK = 500;
+
+  // Preferred path: service-role client (available on Lovable hosting).
+  if (process.env["SUPABASE_SERVICE_ROLE_KEY"]) {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let upserted = 0;
+    for (let i = 0; i < rows.length; i += CHUNK) {
+      const { error } = await supabaseAdmin
+        .from("fire_detections")
+        .upsert(rows.slice(i, i + CHUNK), {
+          onConflict: "lat,lon,acq_date,acq_time,sensor,satellite",
+          ignoreDuplicates: true,
+        });
+      if (error) throw new Error(`upsert failed: ${error.message}`);
+      upserted += Math.min(CHUNK, rows.length - i);
+    }
+    return upserted;
+  }
+
+  // Portable path (self-hosted deploys, e.g. Vercel): the service-role key is
+  // not available, so writes go through a token-gated SECURITY DEFINER RPC.
+  const token = process.env["FIRELENS_INGEST_TOKEN"];
+  if (!token) {
+    throw new Error(
+      "No write credentials: set SUPABASE_SERVICE_ROLE_KEY or FIRELENS_INGEST_TOKEN.",
+    );
+  }
+  const { publicServerClient } = await import("./supabase-public.server");
+  const sb = publicServerClient();
+  let upserted = 0;
   for (let i = 0; i < rows.length; i += CHUNK) {
-    const { error } = await supabaseAdmin
-      .from("fire_detections")
-      .upsert(rows.slice(i, i + CHUNK), {
-        onConflict: "lat,lon,acq_date,acq_time,sensor,satellite",
-        ignoreDuplicates: true,
-      });
+    const { data, error } = await sb.rpc("ingest_fire_detections", {
+      _token: token,
+      _rows: rows.slice(i, i + CHUNK),
+    });
     if (error) throw new Error(`upsert failed: ${error.message}`);
-    upserted += Math.min(CHUNK, rows.length - i);
+    upserted += typeof data === "number" ? data : 0;
   }
   return upserted;
 }
+
 
 /** Split [startDate, endDate] into consecutive windows of at most 5 days. */
 export function chunkDateRange(startDate: string, endDate: string): string[] {
