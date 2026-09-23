@@ -1,9 +1,3 @@
-# Clarity First
-
-Ask me clarifying questions before building if anything here is ambiguous
-
-This project was built with [Lovable](https://lovable.dev).
-
 ## Build with Lovable
 
 Continue developing this project in the [Lovable editor](https://lovable.dev/projects/bbafee09-c587-4388-9b19-6e832f97bc63).
